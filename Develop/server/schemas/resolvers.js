@@ -4,15 +4,16 @@ const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
-    me: async (parent, { username }) => {
-      return User.findOne({ username: username });
+    me: async (_, { userId }) => {
+      const user = await User.findById(userId);
+      return user;
     },
   },
 
   Mutation: {
     // TODO: Add comments to each line of code below to describe the functionality below
-    addUser: async (parent, args) => {
-      const user = await User.create(args);
+    addUser: async (parent, { username, password, email }) => {
+      const user = await User.create({ username, password, email });
       const token = signToken(user);
 
       return { token, user };
@@ -35,21 +36,31 @@ const resolvers = {
       const token = signToken(userEmail);
       return { token, userEmail };
     },
-    saveBook: async (parent, { authors, description, title, image, link }) => {
-      const book = await User.create({
-        authors,
-        description,
-        title,
-        image,
-        link,
-      });
+    // saveBook: async (parent, { authors, description, title, image, link }) => {
+    //   const book = await User.create({
+    //     authors,
+    //     description,
+    //     title,
+    //     image,
+    //     link,
+    //   });
 
-      await User.findOneAndUpdate(
-        { username: username },
-        { $addToSet: { Book: book.id } }
-      );
+    //   await User.findOneAndUpdate(
+    //     { username: username },
+    //     { $addToSet: { Book: book.id } }
+    //   );
 
-      return book;
+    //   return book;
+    // },
+    saveBook: async (parent, { bookPieces }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          {
+            $push: { savedBooks: bookPieces },
+          }
+        );
+      }
     },
 
     removeBook: async (parent, { bookId }) => {
