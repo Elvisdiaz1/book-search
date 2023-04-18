@@ -9,9 +9,7 @@ import Auth from "../utils/auth";
 import { removeBookId } from "../utils/localStorage";
 
 const SavedBooks = () => {
-  const { loading, data } = useQuery(QUERY_GET_ME, {
-    variables: { username: username },
-  });
+  const { loading, data } = useQuery(QUERY_GET_ME);
 
   const userData = data?.me || {};
 
