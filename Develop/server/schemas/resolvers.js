@@ -4,9 +4,8 @@ const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
-    me: async (_, { userId }) => {
-      const user = await User.findById(userId);
-      return user;
+    me: async (_, { username }) => {
+      return await User.findOne({ username });
     },
   },
 
@@ -52,15 +51,18 @@ const resolvers = {
 
     //   return book;
     // },
-    saveBook: async (parent, { bookPieces }, context) => {
-      if (context.user) {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: context.user._id },
-          {
-            $push: { savedBooks: bookPieces },
-          }
-        );
-      }
+    saveBook: async (parent, { bookPieces, user }, context) => {
+      const updatedUser = await User.create({
+        bookPieces,
+      });
+      await User.findOneAndUpdate(
+        { _id: user },
+        {
+          $push: { savedBooks: bookPieces },
+        }
+      );
+
+      return updatedUser;
     },
 
     removeBook: async (parent, { bookId }) => {
