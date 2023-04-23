@@ -35,22 +35,7 @@ const resolvers = {
       const token = signToken(userEmail);
       return { token, userEmail };
     },
-    // saveBook: async (parent, { authors, description, title, image, link }) => {
-    //   const book = await User.create({
-    //     authors,
-    //     description,
-    //     title,
-    //     image,
-    //     link,
-    //   });
 
-    //   await User.findOneAndUpdate(
-    //     { username: username },
-    //     { $addToSet: { Book: book.id } }
-    //   );
-
-    //   return book;
-    // },
     saveBook: async (parent, { bookPieces }, context) => {
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
