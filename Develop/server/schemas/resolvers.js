@@ -51,7 +51,7 @@ const resolvers = {
 
     //   return book;
     // },
-    saveBook: async (parent, { bookPieces, user }, context) => {
+    saveBook: async (parent, { bookPieces }, context) => {
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
@@ -66,12 +66,19 @@ const resolvers = {
       throw new AuthenticationError("Please log in to continue.");
     },
 
-    removeBook: async (parent, { bookId }) => {
-      return User.findOneAndUpdate(
-        { _id: bookId },
-        { $pull: { savedBooks: { _id: bookId } } },
-        { new: true }
-      );
+    removeBook: async (parent, { bookId }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          {
+            $pull: { savedBooks: bookId },
+          },
+          { new: true }
+        );
+        return updatedUser;
+      }
+
+      throw new AuthenticationError("Please log in to continue.");
     },
   },
 };
