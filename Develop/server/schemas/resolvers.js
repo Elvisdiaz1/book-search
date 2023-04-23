@@ -52,17 +52,18 @@ const resolvers = {
     //   return book;
     // },
     saveBook: async (parent, { bookPieces, user }, context) => {
-      const updatedUser = await User.create({
-        bookPieces,
-      });
-      await User.findOneAndUpdate(
-        { _id: user },
-        {
-          $push: { savedBooks: bookPieces },
-        }
-      );
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          {
+            $push: { savedBooks: bookPieces },
+          },
+          { new: true }
+        );
+        return updatedUser;
+      }
 
-      return updatedUser;
+      throw new AuthenticationError("Please log in to continue.");
     },
 
     removeBook: async (parent, { bookId }) => {
