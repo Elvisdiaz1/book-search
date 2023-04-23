@@ -18,22 +18,24 @@ const resolvers = {
       return { token, user };
     },
     // TODO: Add comments to each line of code below to describe the functionality below
-    login: async (parent, { username, email, password }) => {
-      const userEmail = await User.findOne({ email });
-      const userName = await User.findOne({ username });
+    login: async (_, { email, password }) => {
+      // Find a user
+      const user = await User.findOne({ email });
 
-      if (!userEmail || !userName) {
-        throw new AuthenticationError("Incorrect credentials");
+      // If no user is found, return message
+      if (!user) {
+        throw new AuthenticationError("The infomation is incorrect");
       }
 
+      // Check to see if the password is correct from validator in User.js
       const correctPw = await user.isCorrectPassword(password);
 
+      // If incorrect password, return message
       if (!correctPw) {
-        throw new AuthenticationError("Incorrect credentials");
+        throw new AuthenticationError("The infomation is incorrect");
       }
-
-      const token = signToken(userEmail);
-      return { token, userEmail };
+      const token = signToken(user);
+      return { token, user };
     },
 
     saveBook: async (parent, { bookPieces }, context) => {
