@@ -17,7 +17,7 @@ const resolvers = {
 
       return { token, user };
     },
-    // TODO: Add comments to each line of code below to describe the functionality below
+
     login: async (_, { email, password }) => {
       // Find a user
       const user = await User.findOne({ email });
