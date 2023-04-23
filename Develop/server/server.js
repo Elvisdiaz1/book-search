@@ -13,8 +13,9 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: authMiddleware,
-  introspection: true,
+  // introspection: true,
 });
+console.log(authMiddleware);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,7 +31,7 @@ app.get("/", (req, res) => {
 
 // Create a new instance of an Apollo server with the GraphQL schema
 
-const startApolloServer = async (typeDefs, resolvers) => {
+const startApolloServer = async () => {
   await server.start();
   server.applyMiddleware({ app });
 
@@ -45,4 +46,5 @@ const startApolloServer = async (typeDefs, resolvers) => {
 };
 
 // Call the async function to start the server
-startApolloServer(typeDefs, resolvers);
+// startApolloServer(typeDefs, resolvers);
+startApolloServer();
